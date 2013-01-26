@@ -34,21 +34,19 @@ int main(int argc, char*argv[]) {
 
     // You should read in the command and execute it here
     char *input_string = malloc(100 * sizeof(char));
-    //char **p_input_string = &input_string;
-    int input_chari = 0;
-    char input_charc = ' ';
-    int count = 0;
+    char **p_input_string = &input_string;
+    int input_chari;
+    char input_charc;
 
-    while(((input_chari = getchar()) != EOF) && (input_chari != 0) && (input_chari != '\n')){
+    while(((input_chari = fgetc(stdin)) != EOF) && (input_chari != '\0')
+	  && (input_chari != '\n')){
       input_charc = (char)(input_chari);
-      input_string[count] = input_charc;
-      //*input_string++;
-      count++;
+      *input_string = input_charc;
+      input_string++;
     }
-
-    input_string[count++] = '\0';
-    //input_string = *p_input_string;
-    printf("%s\n", input_string);
+    *input_string = '\0';
+    input_string = *p_input_string;
+    printf("%s", input_string);
   }
   
   return 0;
