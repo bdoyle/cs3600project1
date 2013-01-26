@@ -21,7 +21,7 @@ int main(int argc, char*argv[]) {
   USE(argv);
   setvbuf(stdout, NULL, _IONBF, 0); 
 
-  char *user = getenv("USERNAME");
+  char *user = getenv("USER");
   char *pwd = getenv("PWD");
   char hostname[1024];
   hostname[1023] = '\0';
