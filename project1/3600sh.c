@@ -22,18 +22,20 @@ int main(int argc, char*argv[]) {
   USE(argv);
   setvbuf(stdout, NULL, _IONBF, 0); 
 
+  // Variables for printing the prompt
   char *user = getenv("USER");
   char *pwd = getenv("PWD");
   char hostname[1024];
   hostname[1023] = '\0';
   gethostname(hostname, 1023);
+  // Used during fork:
   pid_t pid;
   // Main loop that reads a command and executes it
   while (1) {
-    // You should issue the prompt here
+    // prompt
     printf("%s@%s:%s>", user, hostname, pwd);
 
-    // You should read in the command and execute it here
+    // Variables for character reading
     char *input_string = malloc(100 * sizeof(char));
     char **separated = malloc(100 * sizeof(char *));
     char **arguments = malloc(100 * sizeof(char *));
@@ -41,12 +43,13 @@ int main(int argc, char*argv[]) {
     char input_charc = ' ';
     int count = 0;
 
+    // Read input
     while(((input_chari = getchar()) != EOF) && (input_chari != 0) && (input_chari != '\n')){
       input_charc = (char)(input_chari);
       input_string[count] = input_charc;
       count++;
     }
-
+    // Check to see if exit command has been input
     if(strcmp(input_string, "exit") == 0){
       free(input_string);
       free(separated);
@@ -55,13 +58,20 @@ int main(int argc, char*argv[]) {
     }
     
     input_string[count++] = '\0';
-    //input_string = *p_input_string;
-    printf("%s\n", input_string);
+    // Prints out to make sure that input_string is being filled properly.
+    // printf("%s\n", input_string);
+
+    // Runs separate function on the input, which should split the input into multiple strings, and get rid of all of the spaces.
+    // execvp takes as arguments a char * (the command) and a char** (arguments) so we have to split it into a char**.
     separated = separate(input_string);
     
-    for(int i = 0; i < 1; i++){
-      printf("%s\n", separated[i]);
-    }
+    // Ensures separated is returning the correct output
+    printf("%s\n", separated[0]);
+
+
+
+
+    // Child process created here. This needs to be modified, I copied it almost exactly from one of his lecture slides.
     pid = fork();
     // Check for fork error
     if (pid < 0){
@@ -101,7 +111,7 @@ char **separate(char *input){
       argcount++;
       tempcount = 0;
     }
-    // If \ character is found, properly handle it
+    // If \ character is found, properly handle it (DON'T THINK WE NEED TO WORRY ABOUT THIS FOR THE MILESTONE, SO I COMMENTED IT OUT)
 /**    else if(input[i] == '\\'){
       char d = getchar();
       if(d == 't'){
@@ -114,33 +124,11 @@ char **separate(char *input){
       temp[tempcount] = input[i];
       tempcount++;
     }
-
+    // Add the temporary string to the args char **
     args[argcount] = temp;
   }
   free(temp);
   return args;
-}
-
-// Function that parses the input string into an array of char *s
-char **parse(char *input){
-  int index = 0;
-  char *newArg = (char *) malloc(100 * sizeof(char)); 
-  int argIndex = 0;
-  char **argArray = (char **) malloc(100 * sizeof(char *));
-  int arrayIndex = 0;
-  while(input[index] != '\0'){
-    if(input[index] == ' '){
-      if((input[index+1] != ' ') || (input[index+1])){
-        argArray[arrayIndex] = newArg;
-        arrayIndex++;
-        free(newArg);
-        newArg = (char *) malloc(100 * sizeof(char));
-      }
-    }
-    index++;
-    argIndex++;
-  }
-  return argArray;
 }
 
 // Function which exits, printing the necessary message
