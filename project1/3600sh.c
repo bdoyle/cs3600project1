@@ -38,7 +38,6 @@ int main(int argc, char*argv[]) {
     // Variables for character reading
     char *input_string = malloc(100 * sizeof(char));
     char **separated = malloc(100 * sizeof(char *));
-    char **arguments = malloc(100 * sizeof(char *));
     int input_chari = 0;
     char input_charc = ' ';
     int count = 0;
@@ -53,7 +52,6 @@ int main(int argc, char*argv[]) {
     if(strcmp(input_string, "exit") == 0){
       free(input_string);
       free(separated);
-      free(arguments);
       do_exit();
     }
     
@@ -80,8 +78,9 @@ int main(int argc, char*argv[]) {
     }
     //Child process
     else if(pid == 0){
-      execvp(separated[0], arguments);
+      execvp(separated[0], separated);
       printf("Child in Progress\n");
+      exit(0);
     }
     // Parent process
     else{
